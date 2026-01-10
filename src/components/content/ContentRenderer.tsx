@@ -1,23 +1,37 @@
 import { Link } from "react-router-dom";
-import type { ContentBlock } from "@/lib/types";
+import { useMemo } from "react";
+import type { ContentBlock, GlossaryTerm } from "@/lib/types";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import Callout from "./Callout";
 import { cn } from "@/lib/utils";
+import { useGlossaryTerms } from "@/hooks/useGlossary";
 
 interface ContentRendererProps {
   blocks: ContentBlock[];
 }
 
 export default function ContentRenderer({ blocks }: ContentRendererProps) {
+  const { data: glossaryTerms } = useGlossaryTerms();
+  const glossaryBySlug = useMemo(() => {
+    return new Map((glossaryTerms || []).map(term => [term.slug, term]));
+  }, [glossaryTerms]);
+
   return (
     <div className="prose-crypto">
       {blocks.map((block, index) => (
-        <ContentBlockComponent key={index} block={block} />
+        <ContentBlockComponent key={index} block={block} glossaryBySlug={glossaryBySlug} />
       ))}
     </div>
   );
 }
 
-function ContentBlockComponent({ block }: { block: ContentBlock }) {
+function ContentBlockComponent({
+  block,
+  glossaryBySlug
+}: {
+  block: ContentBlock;
+  glossaryBySlug: Map<string, GlossaryTerm>;
+}) {
   switch (block.type) {
     case 'heading':
       const HeadingTag = `h${block.level}` as 'h1' | 'h2' | 'h3';
@@ -31,6 +45,18 @@ function ContentBlockComponent({ block }: { block: ContentBlock }) {
       );
 
     case 'paragraph':
+      if (block.glossaryTermRefs?.length) {
+        const glossaryTerms = block.glossaryTermRefs
+          .map(slug => glossaryBySlug.get(slug))
+          .filter((term): term is GlossaryTerm => Boolean(term));
+
+        return (
+          <p className="text-lg leading-8 mb-6 text-foreground/90">
+            {renderGlossaryText(block.text, glossaryTerms)}
+          </p>
+        );
+      }
+
       return (
         <p className="text-lg leading-8 mb-6 text-foreground/90">
           {block.text}
@@ -109,4 +135,46 @@ function ContentBlockComponent({ block }: { block: ContentBlock }) {
     default:
       return null;
   }
+}
+
+function escapeRegExp(value: string) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function renderGlossaryText(text: string, terms: GlossaryTerm[]) {
+  if (!terms.length) return text;
+
+  const termMap = new Map(terms.map(term => [term.term.toLowerCase(), term]));
+  const pattern = terms
+    .map(term => term.term)
+    .sort((a, b) => b.length - a.length)
+    .map(escapeRegExp)
+    .join("|");
+
+  if (!pattern) return text;
+
+  const regex = new RegExp(`(${pattern})`, "gi");
+  const parts = text.split(regex);
+
+  return parts.map((part, index) => {
+    const term = termMap.get(part.toLowerCase());
+    if (!term) return part;
+
+    return (
+      <Tooltip key={`${term.slug}-${index}`}>
+        <TooltipTrigger asChild>
+          <span className="glossary-term">{part}</span>
+        </TooltipTrigger>
+        <TooltipContent className="max-w-xs">
+          <div className="space-y-2">
+            <p className="font-semibold">{term.term}</p>
+            <p className="text-xs text-muted-foreground">{term.short_def}</p>
+            <Link to={`/glossary/${term.slug}`} className="text-xs text-primary hover:underline">
+              Открыть термин
+            </Link>
+          </div>
+        </TooltipContent>
+      </Tooltip>
+    );
+  });
 }
