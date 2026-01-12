@@ -5,6 +5,24 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useInteractiveBySlug } from "@/hooks/useInteractives";
 import { DIFFICULTY_LABELS } from "@/lib/types";
+import {
+  DigitalSignatureDemo,
+  MerkleTreeExplorer,
+  TransactionLifecycle,
+  UTXOvsAccountDemo,
+  RollupL2Demo,
+  ApprovalsSandbox
+} from "@/components/interactives";
+
+// Маппинг slug → компонент
+const INTERACTIVE_COMPONENTS: Record<string, React.ComponentType> = {
+  'digital-signature': DigitalSignatureDemo,
+  'merkle-tree': MerkleTreeExplorer,
+  'transaction-lifecycle': TransactionLifecycle,
+  'utxo-vs-account': UTXOvsAccountDemo,
+  'rollup-l2': RollupL2Demo,
+  'approvals-sandbox': ApprovalsSandbox,
+};
 
 export default function InteractiveView() {
   const { slug } = useParams();
@@ -30,6 +48,9 @@ export default function InteractiveView() {
       </Layout>
     );
   }
+
+  // Получаем компонент по slug
+  const InteractiveComponent = slug ? INTERACTIVE_COMPONENTS[slug] : null;
 
   return (
     <Layout>
@@ -59,16 +80,22 @@ export default function InteractiveView() {
             {interactive.description}
           </p>
 
-          {/* Interactive placeholder */}
-          <div className="rounded-2xl border bg-muted/30 p-12 text-center min-h-[400px] flex flex-col items-center justify-center">
-            <Sparkles className="h-16 w-16 text-muted-foreground/50 mb-4" />
-            <p className="text-muted-foreground">
-              Интерактивная демонстрация в разработке
-            </p>
-            <p className="text-sm text-muted-foreground mt-2">
-              Здесь будет визуализация: {interactive.title}
-            </p>
-          </div>
+          {/* Interactive component or placeholder */}
+          {InteractiveComponent ? (
+            <div className="rounded-2xl border bg-card p-6 md:p-8">
+              <InteractiveComponent />
+            </div>
+          ) : (
+            <div className="rounded-2xl border bg-muted/30 p-12 text-center min-h-[400px] flex flex-col items-center justify-center">
+              <Sparkles className="h-16 w-16 text-muted-foreground/50 mb-4" />
+              <p className="text-muted-foreground">
+                Интерактивная демонстрация в разработке
+              </p>
+              <p className="text-sm text-muted-foreground mt-2">
+                Здесь будет визуализация: {interactive.title}
+              </p>
+            </div>
+          )}
         </div>
       </div>
     </Layout>
