@@ -33,16 +33,25 @@ export default function DigitalSignatureDemo() {
     setVerificationResult(null);
   };
 
+  // Простая хэш-функция для демонстрации (поддерживает Unicode)
+  const simpleHash = (str: string): string => {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+      const char = str.charCodeAt(i);
+      hash = ((hash << 5) - hash) + char;
+      hash = hash & hash;
+    }
+    return Math.abs(hash).toString(16).padStart(8, '0');
+  };
+
   // Симуляция подписи
   const signMessage = () => {
     if (!keyPair) return;
     
-    // Простейший "хэш" для демонстрации
-    const hash = btoa(message + keyPair.privateKey.slice(0, 10))
-      .replace(/[^a-zA-Z0-9]/g, '')
-      .slice(0, 32);
+    // Хэш сообщения + часть приватного ключа
+    const hash = simpleHash(message + keyPair.privateKey.slice(0, 10));
     
-    setSignature(`0x${hash}...${hash.slice(-8)}`);
+    setSignature(`0x${hash}${simpleHash(hash)}...${hash.slice(-4)}`);
     setVerifyMessage(message);
     setStep(3);
   };
