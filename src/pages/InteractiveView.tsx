@@ -14,13 +14,13 @@ import {
   ApprovalsSandbox
 } from "@/components/interactives";
 
-// Маппинг slug → компонент
+// Маппинг slug → компонент (соответствует slugs в БД)
 const INTERACTIVE_COMPONENTS: Record<string, React.ComponentType> = {
-  'digital-signature': DigitalSignatureDemo,
-  'merkle-tree': MerkleTreeExplorer,
+  'digital-signature-steps': DigitalSignatureDemo,
+  'merkle-proof': MerkleTreeExplorer,
   'transaction-lifecycle': TransactionLifecycle,
   'utxo-vs-account': UTXOvsAccountDemo,
-  'rollup-l2': RollupL2Demo,
+  'rollup-flow': RollupL2Demo,
   'approvals-sandbox': ApprovalsSandbox,
 };
 

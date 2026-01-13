@@ -9,7 +9,7 @@ const tracks = [
     title: 'С нуля',
     description: 'Блокчейн, криптография, консенсус — понимание технологии с основ',
     icon: Cpu,
-    href: '/read/a1-blockchain-basics',
+    href: '/read/blockchain-basics',
     color: 'text-primary'
   },
   {
@@ -17,7 +17,7 @@ const tracks = [
     title: 'Уже знаю базу',
     description: 'Кошельки, безопасность ключей, подписи и разрешения',
     icon: Wallet,
-    href: '/read/b1-wallet-keys',
+    href: '/read/wallet-basics',
     color: 'text-[hsl(var(--track-wallets))]'
   },
   {
@@ -25,7 +25,7 @@ const tracks = [
     title: 'Безопасность прежде всего',
     description: 'Модели угроз, красные флаги, защита от мошенничества',
     icon: Shield,
-    href: '/safety',
+    href: '/read/security-threats',
     color: 'text-[hsl(var(--callout-threat))]'
   }
 ];
