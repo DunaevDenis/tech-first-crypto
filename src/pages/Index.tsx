@@ -59,9 +59,9 @@ export default function Index() {
             Образование • Не финансовый совет
           </div>
           
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-8 animate-fade-in" style={{ animationDelay: '0.1s' }}>
+          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight mb-12 animate-fade-in" style={{ animationDelay: '0.1s' }}>
             Crypto Atlas
-            <span className="block gradient-text mt-2">Technology First</span>
+            <span className="block gradient-text mt-3">Technology First</span>
           </h1>
           
           <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto mb-12 animate-fade-in" style={{ animationDelay: '0.2s' }}>
