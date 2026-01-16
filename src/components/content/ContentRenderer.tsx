@@ -32,13 +32,13 @@ function ContentBlockComponent({
   block: ContentBlock;
   glossaryBySlug: Map<string, GlossaryTerm>;
 }) {
-  switch (block.type) {
+      switch (block.type) {
     case 'heading':
       const HeadingTag = `h${block.level}` as 'h1' | 'h2' | 'h3';
       return (
         <HeadingTag className={cn(
-          block.level === 2 && "text-2xl font-semibold mt-12 mb-6",
-          block.level === 3 && "text-xl font-semibold mt-8 mb-4"
+          block.level === 2 && "text-xl sm:text-2xl font-semibold mt-8 sm:mt-12 mb-4 sm:mb-6",
+          block.level === 3 && "text-lg sm:text-xl font-semibold mt-6 sm:mt-8 mb-3 sm:mb-4"
         )}>
           {block.text}
         </HeadingTag>
@@ -51,14 +51,14 @@ function ContentBlockComponent({
           .filter((term): term is GlossaryTerm => Boolean(term));
 
         return (
-          <p className="text-lg leading-8 mb-6 text-foreground/90">
+          <p className="text-base sm:text-lg leading-7 sm:leading-8 mb-5 sm:mb-6 text-foreground/90">
             {renderGlossaryText(block.text, glossaryTerms)}
           </p>
         );
       }
 
       return (
-        <p className="text-lg leading-8 mb-6 text-foreground/90">
+        <p className="text-base sm:text-lg leading-7 sm:leading-8 mb-5 sm:mb-6 text-foreground/90">
           {block.text}
         </p>
       );
@@ -121,11 +121,11 @@ function ContentBlockComponent({
       const ListTag = block.ordered ? 'ol' : 'ul';
       return (
         <ListTag className={cn(
-          "my-6 ml-6 space-y-2",
+          "my-5 sm:my-6 ml-5 sm:ml-6 space-y-2",
           block.ordered ? "list-decimal" : "list-disc"
         )}>
           {block.items.map((item, i) => (
-            <li key={i} className="text-lg leading-relaxed text-foreground/90 pl-2">
+            <li key={i} className="text-base sm:text-lg leading-relaxed text-foreground/90 pl-1 sm:pl-2">
               {item}
             </li>
           ))}

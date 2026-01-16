@@ -133,6 +133,7 @@
 
   html {
     scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
   }
 
   body {
@@ -140,38 +141,38 @@
     font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
 
-  /* Premium typography */
+  /* Premium typography - mobile first */
   h1, h2, h3, h4, h5, h6 {
     @apply font-semibold tracking-tight;
   }
 
   h1 {
-    @apply text-4xl md:text-5xl lg:text-6xl leading-[1.1];
+    @apply text-3xl sm:text-4xl md:text-5xl lg:text-6xl leading-[1.15];
   }
 
   h2 {
-    @apply text-3xl md:text-4xl leading-[1.15];
+    @apply text-2xl sm:text-3xl md:text-4xl leading-[1.2];
   }
 
   h3 {
-    @apply text-2xl md:text-3xl leading-[1.2];
+    @apply text-xl sm:text-2xl md:text-3xl leading-[1.25];
   }
 
-  /* Reading content styles */
+  /* Reading content styles - optimized for mobile readability */
   .prose-crypto {
     @apply text-foreground/90 leading-relaxed;
   }
 
   .prose-crypto p {
-    @apply text-lg leading-8 mb-6;
+    @apply text-base sm:text-lg leading-7 sm:leading-8 mb-5 sm:mb-6;
   }
 
   .prose-crypto h2 {
-    @apply text-2xl font-semibold mt-12 mb-6;
+    @apply text-xl sm:text-2xl font-semibold mt-8 sm:mt-12 mb-4 sm:mb-6;
   }
 
   .prose-crypto h3 {
-    @apply text-xl font-semibold mt-8 mb-4;
+    @apply text-lg sm:text-xl font-semibold mt-6 sm:mt-8 mb-3 sm:mb-4;
   }
 }
 
@@ -269,17 +270,42 @@
 }
 
 @layer utilities {
-  /* Content width constraints */
+  /* Content width constraints - mobile optimized */
   .content-width {
-    @apply max-w-3xl mx-auto px-6;
+    @apply max-w-3xl mx-auto px-4 sm:px-6;
   }
 
   .wide-content {
-    @apply max-w-6xl mx-auto px-6;
+    @apply max-w-6xl mx-auto px-4 sm:px-6;
   }
 
   /* Reading progress bar */
   .reading-progress {
     @apply fixed top-0 left-0 h-1 bg-primary z-50 transition-all duration-150;
+  }
+
+  /* Mobile menu animation */
+  .mobile-menu-enter {
+    animation: slideDown 0.2s ease-out;
+  }
+
+  @keyframes slideDown {
+    from {
+      opacity: 0;
+      transform: translateY(-8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Safe area support for mobile */
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 0);
+  }
+
+  .safe-top {
+    padding-top: env(safe-area-inset-top, 0);
   }
 }
