@@ -4,6 +4,7 @@ import { Search, Menu, X, BookOpen, Sparkles, Shield, Info } from "lucide-react"
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import SearchDialog from "@/components/search/SearchDialog";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 const navLinks = [
   { href: "/read", label: "Учебник", icon: BookOpen },
@@ -53,7 +54,7 @@ export default function Header() {
             </nav>
 
             {/* Actions */}
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1">
               <Button
                 variant="ghost"
                 size="icon"
@@ -62,6 +63,8 @@ export default function Header() {
               >
                 <Search className="h-5 w-5" />
               </Button>
+              
+              <ThemeToggle />
 
               {/* Mobile menu button */}
               <Button
