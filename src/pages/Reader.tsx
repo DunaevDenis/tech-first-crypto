@@ -4,6 +4,7 @@ import Layout from "@/components/layout/Layout";
 import ContentRenderer from "@/components/content/ContentRenderer";
 import TrackBadge from "@/components/content/TrackBadge";
 import MobileSectionNav from "@/components/layout/MobileSectionNav";
+import ReadingProgress from "@/components/ReadingProgress";
 import { Button } from "@/components/ui/button";
 import { useChapterBySlug, useSections, useChaptersWithSections } from "@/hooks/useChapters";
 import { cn } from "@/lib/utils";
@@ -52,6 +53,7 @@ export default function Reader() {
 
   return (
     <Layout hideFooter>
+      <ReadingProgress />
       <div className="flex min-h-[calc(100vh-4rem)]">
         {/* Sidebar */}
         <aside className="hidden lg:block w-80 border-r bg-sidebar shrink-0">
