@@ -78,8 +78,8 @@ export default function Header() {
 
         {/* Mobile menu */}
         {mobileMenuOpen && (
-          <div className="md:hidden border-t bg-background">
-            <nav className="wide-content py-4 space-y-1">
+          <div className="md:hidden border-t bg-background mobile-menu-enter safe-bottom">
+            <nav className="wide-content py-3 space-y-0.5">
               {navLinks.map((link) => {
                 const Icon = link.icon;
                 return (
@@ -88,13 +88,13 @@ export default function Header() {
                     to={link.href}
                     onClick={() => setMobileMenuOpen(false)}
                     className={cn(
-                      "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors",
+                      "flex items-center gap-3 px-4 py-3 rounded-xl text-base font-medium transition-all active:scale-[0.98]",
                       location.pathname.startsWith(link.href)
                         ? "bg-accent text-accent-foreground"
-                        : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                        : "text-muted-foreground hover:text-foreground hover:bg-muted active:bg-muted"
                     )}
                   >
-                    <Icon className="h-4 w-4" />
+                    <Icon className="h-5 w-5" />
                     {link.label}
                   </Link>
                 );
