@@ -40,19 +40,23 @@ export default function SearchDialog({ open, onOpenChange }: SearchDialogProps) 
       const searchTerm = `%${query}%`;
 
       try {
-        // Search chapters
+        // Full-text search in sections content
+        const { data: ftsResults } = await supabase
+          .rpc('search_sections', { search_query: query });
+
+        // Search chapters by title
         const { data: chapters } = await supabase
           .from('chapters')
           .select('id, title, slug, summary')
           .ilike('title', searchTerm)
           .limit(3);
 
-        // Search sections
-        const { data: sections } = await supabase
+        // Search sections by title (fallback)
+        const { data: titleSections } = await supabase
           .from('sections')
           .select('id, title, slug, chapter_id')
           .ilike('title', searchTerm)
-          .limit(5);
+          .limit(3);
 
         // Search glossary
         const { data: terms } = await supabase
@@ -65,10 +69,23 @@ export default function SearchDialog({ open, onOpenChange }: SearchDialogProps) 
         const { data: interactives } = await supabase
           .from('interactives')
           .select('id, title, slug, description')
-          .ilike('title', searchTerm)
+          .or(`title.ilike.${searchTerm},description.ilike.${searchTerm}`)
           .limit(3);
 
+        // Merge FTS results with title-only results, avoiding duplicates
+        const ftsIds = new Set(ftsResults?.map(r => r.id) || []);
+        const uniqueTitleSections = titleSections?.filter(s => !ftsIds.has(s.id)) || [];
+
         const allResults: SearchResult[] = [
+          // Full-text search results first (with snippets)
+          ...(ftsResults?.map(s => ({
+            id: s.id,
+            type: 'section' as const,
+            title: s.title,
+            description: s.snippet,
+            href: `/read/${s.chapter_id}/${s.slug}`
+          })) || []),
+          // Chapters
           ...(chapters?.map(c => ({
             id: c.id,
             type: 'chapter' as const,
@@ -76,12 +93,14 @@ export default function SearchDialog({ open, onOpenChange }: SearchDialogProps) 
             description: c.summary || undefined,
             href: `/read/${c.slug}`
           })) || []),
-          ...(sections?.map(s => ({
+          // Title-only section matches
+          ...(uniqueTitleSections.map(s => ({
             id: s.id,
             type: 'section' as const,
             title: s.title,
             href: `/read/${s.chapter_id}/${s.slug}`
-          })) || []),
+          }))),
+          // Glossary terms
           ...(terms?.map(t => ({
             id: t.id,
             type: 'term' as const,
@@ -89,6 +108,7 @@ export default function SearchDialog({ open, onOpenChange }: SearchDialogProps) 
             description: t.short_def,
             href: `/glossary/${t.slug}`
           })) || []),
+          // Interactives
           ...(interactives?.map(i => ({
             id: i.id,
             type: 'interactive' as const,
@@ -184,9 +204,10 @@ export default function SearchDialog({ open, onOpenChange }: SearchDialogProps) 
                       </Badge>
                     </div>
                     {result.description && (
-                      <p className="text-sm text-muted-foreground truncate mt-0.5">
-                        {result.description}
-                      </p>
+                      <p 
+                        className="text-sm text-muted-foreground line-clamp-2 mt-0.5"
+                        dangerouslySetInnerHTML={{ __html: result.description }}
+                      />
                     )}
                   </div>
                 </button>
