@@ -279,6 +279,7 @@ export type Database = {
           created_at: string | null
           id: string
           order_num: number
+          searchable_text: string | null
           slug: string
           title: string
         }
@@ -288,6 +289,7 @@ export type Database = {
           created_at?: string | null
           id?: string
           order_num: number
+          searchable_text?: string | null
           slug: string
           title: string
         }
@@ -297,6 +299,7 @@ export type Database = {
           created_at?: string | null
           id?: string
           order_num?: number
+          searchable_text?: string | null
           slug?: string
           title?: string
         }
@@ -315,7 +318,18 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      extract_section_text: { Args: { content_json: Json }; Returns: string }
+      search_sections: {
+        Args: { search_query: string }
+        Returns: {
+          chapter_id: string
+          id: string
+          rank: number
+          slug: string
+          snippet: string
+          title: string
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never
