@@ -1,10 +1,17 @@
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { Search, Menu, X, BookOpen, Sparkles, Shield, Info } from "lucide-react";
+import { Search, Menu, X, BookOpen, Sparkles, Shield, Info, User, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import SearchDialog from "@/components/search/SearchDialog";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { useAuth } from "@/hooks/useAuth";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const navLinks = [
   { href: "/read", label: "Учебник", icon: BookOpen },
@@ -16,8 +23,15 @@ const navLinks = [
 
 export default function Header() {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, signOut } = useAuth();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate("/");
+  };
 
   // Keyboard shortcut ⌘K / Ctrl+K
   useEffect(() => {
@@ -81,6 +95,30 @@ export default function Header() {
               
               <ThemeToggle />
 
+              {/* Auth button */}
+              {user ? (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="icon">
+                      <User className="h-5 w-5" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem className="text-muted-foreground text-xs">
+                      {user.email}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={handleSignOut}>
+                      <LogOut className="mr-2 h-4 w-4" />
+                      Выйти
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              ) : (
+                <Button variant="ghost" size="sm" asChild className="hidden sm:inline-flex">
+                  <Link to="/auth">Войти</Link>
+                </Button>
+              )}
+
               {/* Mobile menu button */}
               <Button
                 variant="ghost"
@@ -117,6 +155,26 @@ export default function Header() {
                   </Link>
                 );
               })}
+              
+              {/* Auth link in mobile menu */}
+              {user ? (
+                <button
+                  onClick={() => { handleSignOut(); setMobileMenuOpen(false); }}
+                  className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-base font-medium text-muted-foreground hover:text-foreground hover:bg-muted active:bg-muted transition-all active:scale-[0.98]"
+                >
+                  <LogOut className="h-5 w-5" />
+                  Выйти
+                </button>
+              ) : (
+                <Link
+                  to="/auth"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="flex items-center gap-3 px-4 py-3 rounded-xl text-base font-medium text-muted-foreground hover:text-foreground hover:bg-muted active:bg-muted transition-all active:scale-[0.98]"
+                >
+                  <User className="h-5 w-5" />
+                  Войти
+                </Link>
+              )}
             </nav>
           </div>
         )}

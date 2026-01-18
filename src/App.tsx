@@ -13,6 +13,7 @@ import InteractivesIndex from "./pages/InteractivesIndex";
 import InteractiveView from "./pages/InteractiveView";
 import Safety from "./pages/Safety";
 import About from "./pages/About";
+import Auth from "./pages/Auth";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -35,6 +36,7 @@ const App = () => (
             <Route path="/interactives/:slug" element={<InteractiveView />} />
             <Route path="/safety" element={<Safety />} />
             <Route path="/about" element={<About />} />
+            <Route path="/auth" element={<Auth />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>

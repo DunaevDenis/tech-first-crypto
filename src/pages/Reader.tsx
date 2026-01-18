@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { ChevronLeft, ChevronRight, Clock } from "lucide-react";
 import Layout from "@/components/layout/Layout";
@@ -5,12 +6,18 @@ import ContentRenderer from "@/components/content/ContentRenderer";
 import TrackBadge from "@/components/content/TrackBadge";
 import MobileSectionNav from "@/components/layout/MobileSectionNav";
 import ReadingProgress from "@/components/ReadingProgress";
+import TextSelectionPopover from "@/components/highlights/TextSelectionPopover";
+import HighlightsList from "@/components/highlights/HighlightsList";
 import { Button } from "@/components/ui/button";
 import { useChapterBySlug, useSections, useChaptersWithSections } from "@/hooks/useChapters";
+import { useAuth } from "@/hooks/useAuth";
 import { cn } from "@/lib/utils";
 
 export default function Reader() {
   const { chapterSlug, sectionSlug } = useParams();
+  const { user } = useAuth();
+  const [highlightRefreshKey, setHighlightRefreshKey] = useState(0);
+  
   const { data: chapter, isLoading: chapterLoading } = useChapterBySlug(chapterSlug);
   const { data: sections } = useSections(chapter?.id);
   const { data: allChapters } = useChaptersWithSections();
@@ -54,6 +61,13 @@ export default function Reader() {
   return (
     <Layout hideFooter>
       <ReadingProgress />
+      {currentSection && (
+        <TextSelectionPopover 
+          sectionId={currentSection.id} 
+          userId={user?.id}
+          onSaved={() => setHighlightRefreshKey(k => k + 1)}
+        />
+      )}
       <div className="flex min-h-[calc(100vh-4rem)]">
         {/* Sidebar */}
         <aside className="hidden lg:block w-80 border-r bg-sidebar shrink-0">
@@ -125,6 +139,13 @@ export default function Reader() {
                 </header>
 
                 <ContentRenderer blocks={currentSection.content_json || []} />
+
+                {/* Highlights list */}
+                <HighlightsList 
+                  sectionId={currentSection.id} 
+                  userId={user?.id}
+                  refreshKey={highlightRefreshKey}
+                />
 
                 {/* Navigation */}
                 <nav className="mt-12 sm:mt-16 pt-6 sm:pt-8 border-t flex flex-col sm:flex-row justify-between gap-3 sm:gap-4">
